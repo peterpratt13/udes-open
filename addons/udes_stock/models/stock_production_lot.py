@@ -26,6 +26,9 @@ class StockProductionLot(models.Model):
             Return empty recordset when the lot is not found;
             prevents the creation of a new lot
         """
+        # Note: Method is called from controller, calling with sudo in order to overpass
+        # access rights
+        self = self.sudo()
         name = None
         domain = [("product_id", "=", product_id)]
 
