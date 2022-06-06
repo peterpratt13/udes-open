@@ -19,17 +19,27 @@ RUN unzip -q -d /opt /opt/odoo-blocked-locations.zip ; \
     unzip -q -d /opt /opt/odoo-edi.zip ; \
     unzip -q -d /opt /opt/server-auth.zip ; \
     ln -s /opt/odoo-blocked-locations-HEAD/addons/* \
-          /opt/odoo-package-hierarchy-HEAD/addons/* \
-          /opt/odoo-print-HEAD/addons/* \
-          /opt/odoo-edi-HEAD/addons/* \
-          /opt/server-auth-11.0/password_security \
-          /opt/server-auth-11.0/auth_brute_force \
-          /opt/server-auth-11.0/auth_session_timeout \
-          /opt/odoo/addons/
+    /opt/odoo-package-hierarchy-HEAD/addons/* \
+    /opt/odoo-print-HEAD/addons/* \
+    /opt/odoo-edi-HEAD/addons/* \
+    /opt/server-auth-11.0/password_security \
+    /opt/server-auth-11.0/auth_brute_force \
+    /opt/server-auth-11.0/auth_session_timeout \
+    /opt/odoo/addons/
 
 # Add modules
 #
 ADD addons /opt/odoo-addons
+
+# Postgres configuration
+# Configure Postgres to mirror production configurations from mounted configuraiton files
+# TODO: File path depends on Story/... and the filepath location
+# ADD .addons/reporting-suite-deployment/pg_hba.conf /tmp/etc/pg_hba.conf
+# ADD .addons/reporting-suite-deployment/postgresql.conf /tmp/etc/postgresql.conf
+ADD pg_hba.conf /tmp/etc/pg_hba.conf
+ADD postgresql.conf /tmp/etc/postgresql.conf
+RUN postgres -c config_file=/tmp/etc/postgresql.conf -c hba_file=/tmp/etc/pg_hba.conf
+
 
 # Module installation (without tests)
 #
